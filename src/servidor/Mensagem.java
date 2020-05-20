@@ -22,23 +22,35 @@ public class Mensagem {
     
     private void Thread(){
         
-        String mensagem = "";
         
-        try{
-          InputStreamReader isr = new InputStreamReader(s.getInputStream());
-          BufferedReader br = new BufferedReader(isr);
-          
-          while((mensagem = br.readLine()) != null){
-              
-              enviarMensagem(mensagem);
-              
-          }
-          
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-      
+        Thread t = new Thread(new Runnable(){
+        
+            @Override
+            public void run(){
+
+                String mensagem = "";
+        
+                try{
+                  InputStreamReader isr = new InputStreamReader(s.getInputStream());
+                  BufferedReader br = new BufferedReader(isr);
+
+                  while((mensagem = br.readLine()) != null){
+
+                      enviarMensagem(mensagem);
+
+                  }
+
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        
+        });
+        
+        t.start();
+        
+        
     }
     
     private void enviarMensagem(String mensagem){

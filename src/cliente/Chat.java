@@ -3,25 +3,76 @@ package cliente;
 import java.net.*;
 import static javax.swing.JOptionPane.*;
 import java.io.PrintStream;
+import java.awt.event.*;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 
 public class Chat extends javax.swing.JFrame {
 
+    private String nome;
     private Socket s;
+    private BufferedReader br;
+    private InputStreamReader isr;
     
-    public Chat() {
+    
+    public Chat(String nome) {
+        
+        initComponents();
+        
+        this.nome = nome;
         
         try{
             s = new Socket("127.0.0.1",5000);
         }
-        catch(Exception e){
+        catch(IOException e){
             
             showMessageDialog(null,"Não se conectou ao servidor","",ERROR_MESSAGE);
             System.exit(0);
         }
         
-        initComponents();
+        Thread();
+        
     }
 
+    private void Thread(){
+        
+        Thread t = new Thread(new Runnable(){
+        
+            String mensagem;
+            
+            @Override
+            public void run(){
+                
+                try{
+                    
+                    isr = new InputStreamReader(s.getInputStream());
+                    br = new BufferedReader(isr);
+                    
+                    while((mensagem = br.readLine()) != null){
+                        
+                       TextView.setText(TextView.getText() + mensagem + "\n");
+                        
+                    }
+                    
+                }
+                catch(IOException e){
+                    
+                    showMessageDialog(null, "Erro na conexão com o servidor", "", ERROR_MESSAGE);
+                    
+                }
+                
+                
+                
+            }
+        
+        });
+        
+        t.start();
+        
+    }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -49,6 +100,12 @@ public class Chat extends javax.swing.JFrame {
         jScrollPane1.setViewportView(TextView);
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/logo-small.png"))); // NOI18N
+
+        TextInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                TextInputKeyPressed(evt);
+            }
+        });
 
         Button.setText("Enviar");
         Button.addActionListener(new java.awt.event.ActionListener() {
@@ -104,8 +161,8 @@ public class Chat extends javax.swing.JFrame {
 
     private void ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonActionPerformed
         
-        String menssagem;
-        
+        String menssagem = nome+"disse: ";
+           
         try{
             PrintStream ps = new PrintStream(s.getOutputStream());
             menssagem = TextInput.getText();
@@ -115,12 +172,35 @@ public class Chat extends javax.swing.JFrame {
             
             TextInput.setText("");
         }
-        catch(Exception ex){
+        catch(IOException ex){
             showMessageDialog(null,"Não conseguiu enviar a menssagem","",ERROR_MESSAGE);
         }
         
         
     }//GEN-LAST:event_ButtonActionPerformed
+
+    private void TextInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TextInputKeyPressed
+     
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+                    
+        String menssagem;
+          
+        try{
+            PrintStream ps = new PrintStream(s.getOutputStream());
+            menssagem = nome + ": " + TextInput.getText();
+            
+            ps.println(menssagem);
+            ps.flush();
+            
+            TextInput.setText("");
+        }
+        catch(IOException ex){
+            showMessageDialog(null,"Não conseguiu enviar a menssagem","",ERROR_MESSAGE);
+        }
+        
+        }
+        
+    }//GEN-LAST:event_TextInputKeyPressed
 
  
     // Variables declaration - do not modify//GEN-BEGIN:variables
