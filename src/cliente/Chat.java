@@ -12,19 +12,23 @@ import java.io.InputStreamReader;
 public class Chat extends javax.swing.JFrame {
 
     private String nome;
+    private String IP;
+    private int PORT;
     private Socket s;
     private BufferedReader br;
     private InputStreamReader isr;
     
     
-    public Chat(String nome) {
+    public Chat(String nome,String IP,int PORT) {
         
         initComponents();
         
         this.nome = nome;
+        this.IP = IP;
+        this.PORT = PORT;
         
         try{
-            s = new Socket("127.0.0.1",5000);
+            s = new Socket(IP,PORT);
         }
         catch(IOException e){
             

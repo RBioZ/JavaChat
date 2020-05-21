@@ -1,15 +1,11 @@
 package cliente;
 
-import static javax.swing.JOptionPane.*;
-
 public class Cliente {
     
     public static void main(String[] args){
-        
-        String nome = showInputDialog(null,"Digite seu nome: ");
-        
-        Chat chat = new Chat(nome);
-        chat.setVisible(true);
+ 
+        Login login = new Login();
+        login.setVisible(true);
         
     }
     
